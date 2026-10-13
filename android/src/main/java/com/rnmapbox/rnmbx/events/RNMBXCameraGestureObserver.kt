@@ -1,7 +1,6 @@
 package com.rnmapbox.rnmbx.events
 
 import android.content.Context
-import android.util.Log
 import com.rnmapbox.rnmbx.components.AbstractMapFeature
 import com.rnmapbox.rnmbx.components.RemovalReason
 import com.rnmapbox.rnmbx.components.mapview.MapGestureType
@@ -10,26 +9,20 @@ import com.rnmapbox.rnmbx.components.mapview.helpers.MapCameraChangeDetector
 import com.rnmapbox.rnmbx.components.mapview.helpers.MapSteadyDetector
 
 class RNMBXCameraGestureObserver(
-    private val mContext: Context,
-    private val mManager: RNMBXCameraGestureObserverManager
-) : AbstractMapFeature(mContext) {
-
-    var hasOnMapSteady: Boolean = false
-    var hasOnMapCameraChange: Boolean = false
+    context: Context,
+    private val manager: RNMBXCameraGestureObserverManager
+) : AbstractMapFeature(context) {
+    var hasOnMapSteady = false
+        set(value) { field = value; updateDetectors() }
+    var hasOnCameraChanged = false
+        set(value) { field = value; updateDetectors() }
     var quietPeriodMs: Double? = null
+        set(value) { field = value; mapSteadyDetector?.quietPeriodMs = value ?: 200.0 }
     var maxIntervalMs: Double? = null
-
-    override var requiresStyleLoad: Boolean = false
-
+        set(value) { field = value; mapSteadyDetector?.maxIntervalMs = value }
+    override var requiresStyleLoad = false
     private var mapSteadyDetector: MapSteadyDetector? = null
     private var mapCameraChangeDetector: MapCameraChangeDetector? = null
-
-    private fun debugLog(message: String) {
-        Log.d(
-            LOG_TAG,
-            "$message; activeAnimations=${mapSteadyDetector?.activeAnimations} isGestureActive=${mapSteadyDetector?.isGestureActive} lastTransitionEnd=${mapSteadyDetector?.lastTransitionEndedAtMs ?: -1}"
-        )
-    }
 
     private fun normalizeGestureType(type: MapGestureType?): String? = when (type) {
         MapGestureType.Move -> "pan"
@@ -42,69 +35,48 @@ class RNMBXCameraGestureObserver(
 
     override fun addToMap(mapView: RNMBXMapView) {
         super.addToMap(mapView)
+        updateDetectors()
+    }
 
-        if (hasOnMapSteady) {
-            mapView.getMapAsync { mapboxMap ->
-                val det = MapSteadyDetector(
-                    mapboxMap = mapboxMap,
-                    quietPeriodMs = quietPeriodMs ?: 200.0,
-                    maxIntervalMs = maxIntervalMs,
-                )
-                det.onSteady = { idleDurationMs, lastGestureType ->
-                    debugLog("EMIT steady idleDurationMs=$idleDurationMs lastGestureType=$lastGestureType")
-                    mManager.handleEvent(
-                        MapSteadyEvent.make(
-                            this,
-                            "steady",
-                            idleDurationMs,
-                            normalizeGestureType(lastGestureType)
-                        )
-                    )
-                }
-                det.onTimeout = { lastGestureType ->
-                    debugLog("EMIT timeout lastGestureType=$lastGestureType")
-                    mManager.handleEvent(
-                        MapSteadyEvent.make(
-                            this,
-                            "timeout",
-                            null,
-                            normalizeGestureType(lastGestureType)
-                        )
-                    )
-                }
-                det.attach()
-                mapSteadyDetector = det
-                debugLog("addToMap and subscribed to gestures")
-            }
+    private fun updateDetectors() {
+        val mapView = mMapView ?: return
+        if (!hasOnMapSteady) {
+            mapSteadyDetector?.detach()
+            mapSteadyDetector = null
         }
-
-        if (hasOnMapCameraChange) {
-            mapView.getMapAsync { mapboxMap ->
-                val det = MapCameraChangeDetector(
-                    mapboxMap = mapboxMap
-                )
-                det.onMapCameraChange = { cameraChanged, derivedReason ->
-                    mManager.handleEvent(
-                        MapCameraChangeEvent.make(this, mapboxMap, cameraChanged, derivedReason)
-                    )
+        if (!hasOnCameraChanged) {
+            mapCameraChangeDetector?.detach()
+            mapCameraChangeDetector = null
+        }
+        mapView.getMapAsync { mapboxMap ->
+            if (mMapView !== mapView) return@getMapAsync
+            if (hasOnMapSteady && mapSteadyDetector == null) {
+                val detector = MapSteadyDetector(mapboxMap, quietPeriodMs ?: 200.0, maxIntervalMs)
+                detector.onSteady = { duration, gesture ->
+                    manager.handleEvent(MapSteadyEvent.make(this, "steady", duration, normalizeGestureType(gesture)))
                 }
-                det.attach()
-                mapCameraChangeDetector = det
-                debugLog("addToMap and subscribed to gestures")
+                detector.onTimeout = { gesture ->
+                    manager.handleEvent(MapSteadyEvent.make(this, "timeout", null, normalizeGestureType(gesture)))
+                }
+                mapSteadyDetector = detector
+                detector.attach()
+            }
+            if (hasOnCameraChanged && mapCameraChangeDetector == null) {
+                val detector = MapCameraChangeDetector(mapboxMap)
+                detector.onCameraChanged = { camera, active, interaction ->
+                    manager.handleEvent(MapCameraChangeEvent.make(this, mapboxMap, camera, active, interaction))
+                }
+                mapCameraChangeDetector = detector
+                detector.attach()
             }
         }
     }
 
     override fun removeFromMap(mapView: RNMBXMapView, reason: RemovalReason): Boolean {
-        debugLog("removeFromMap and unsubscribed from gestures")
         mapSteadyDetector?.detach()
         mapSteadyDetector = null
         mapCameraChangeDetector?.detach()
         mapCameraChangeDetector = null
         return super.removeFromMap(mapView, reason)
-    }
-
-    companion object {
-        const val LOG_TAG = "RNMBXCameraGestureObserver"
     }
 }

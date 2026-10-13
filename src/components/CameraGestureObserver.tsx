@@ -1,44 +1,52 @@
-import { memo } from 'react';
-import type { ViewProps } from 'react-native';
+import { memo, useCallback } from 'react';
+import { Platform, type ViewProps } from 'react-native';
 import RNMBXCameraGestureObserverNativeComponent, {
   type OnMapSteadyEvent,
-  type OnMapCameraChangeEvent,
+  type OnCameraChangedEvent,
 } from '../specs/RNMBXCameraGestureObserverNativeComponent';
+import type { MapState } from './MapView';
 
 type Props = ViewProps & {
   /**
-   * Time in milliseconds to wait after last camera change before emitting 'steady' event.
-   * Default is 200ms.
+   * Time in milliseconds to wait after the last user gesture or gesture animation
+   * before emitting 'steady'. Default is 200ms.
    */
   quietPeriodMs?: number;
-
-  /**
-   * Maximum time in milliseconds before emitting 'timeout' event during continuous activity.
-   */
+  /** Maximum time before emitting 'timeout' during continuous activity. */
   maxIntervalMs?: number;
-
-  /**
-   * Callback when the map reaches a steady state (no active gestures or animations).
-   */
+  /** Callback when user gestures and their camera animations have settled. */
   onMapSteady?: (event: { nativeEvent: OnMapSteadyEvent }) => void;
-
   /**
-   * Callback when the camera changes (due to gestures or animations).
+   * Callback on camera changes, using the same MapState shape as MapView.onCameraChanged.
+   * gestures.isGestureActive reports active touch gestures; gestures.isUserInteraction
+   * also includes camera animations owned by gestures (such as fling inertia).
+   * Programmatic camera changes report false, even while the location puck is pulsing.
+   * This event is independent of MapIdle and is currently supported on Android only.
+   * @platform android
    */
-  onMapCameraChange?: (event: { nativeEvent: OnMapCameraChangeEvent }) => void;
+  onCameraChanged?: (state: MapState) => void;
 };
 
 /**
  * CameraGestureObserver
  *
- * Unified native observer optimized for onMapSteady.
+ * Observes user gesture settlement and camera changes independently of renderer idle.
  */
 export default memo((props: Props) => {
+  const { onCameraChanged, ...rest } = props;
+  const handleCameraChanged = useCallback(
+    (event: { nativeEvent: OnCameraChangedEvent }) => {
+      onCameraChanged?.(event.nativeEvent);
+    },
+    [onCameraChanged],
+  );
+  const enabled = Platform.OS === 'android' && !!onCameraChanged;
   return (
     <RNMBXCameraGestureObserverNativeComponent
-      {...props}
-      hasOnMapSteady={props.onMapSteady ? true : false}
-      hasOnMapCameraChange={props.onMapCameraChange ? true : false}
+      {...rest}
+      hasOnMapSteady={!!props.onMapSteady}
+      hasOnCameraChanged={enabled}
+      onCameraChanged={enabled ? handleCameraChanged : undefined}
     />
   );
 });

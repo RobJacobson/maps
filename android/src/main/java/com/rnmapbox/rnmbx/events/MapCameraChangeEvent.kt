@@ -8,19 +8,8 @@ import com.mapbox.maps.CameraChanged
 import com.mapbox.maps.CameraState
 import com.mapbox.maps.MapboxMap
 import com.mapbox.maps.toCameraOptions
-import com.rnmapbox.rnmbx.components.mapview.helpers.CameraChangeReason
 
-/**
- * Direct event for CameraGestureObserver -> onCameraChange
- * JS registrationName: onCameraChange
- * Native event name (key): onCameraChange
- *
- * Serializes the camera snapshot into the JS `OnCameraChangeEvent` shape:
- * `{ properties: { center, bounds:{ne,sw}, zoom, heading, pitch }, gestures: { isGestureActive }, timestamp }`.
- *
- * [center], [ne] and [sw] are `[longitude, latitude]` pairs. [ne]/[sw] may be `null` if the
- * bounds could not be computed for the current camera.
- */
+/** CameraGestureObserver -> onCameraChanged, using the MapView MapState payload. */
 class MapCameraChangeEvent(
     view: View?,
     private val center: List<Double>,
@@ -29,24 +18,28 @@ class MapCameraChangeEvent(
     private val zoom: Double,
     private val heading: Double,
     private val pitch: Double,
+    private val isGestureActive: Boolean,
     private val isUserInteraction: Boolean,
-) : AbstractEvent(view, "mapCameraChange") {
+) : AbstractEvent(view, "cameraChanged") {
     override val key: String
-        get() = "onMapCameraChange"
+        get() = "onCameraChanged"
 
     override val payload: WritableMap
         get() = Arguments.createMap().apply {
             putMap("properties", Arguments.createMap().apply {
                 putArray("center", center.toWritableArray())
                 putMap("bounds", Arguments.createMap().apply {
-                    if (ne != null) putArray("ne", ne.toWritableArray()) else putNull("ne")
-                    if (sw != null) putArray("sw", sw.toWritableArray()) else putNull("sw")
+                    putArray("ne", (ne ?: emptyList()).toWritableArray())
+                    putArray("sw", (sw ?: emptyList()).toWritableArray())
                 })
                 putDouble("zoom", zoom)
                 putDouble("heading", heading)
                 putDouble("pitch", pitch)
             })
-            putBoolean("isUserInteraction", isUserInteraction)
+            putMap("gestures", Arguments.createMap().apply {
+                putBoolean("isGestureActive", isGestureActive)
+                putBoolean("isUserInteraction", isUserInteraction)
+            })
             putDouble("timestamp", timestamp.toDouble())
         }
 
@@ -70,16 +63,18 @@ class MapCameraChangeEvent(
             zoom: Double,
             heading: Double,
             pitch: Double,
+            isGestureActive: Boolean,
             isUserInteraction: Boolean
         ): MapCameraChangeEvent = MapCameraChangeEvent(
-            view, center, ne, sw, zoom, heading, pitch, isUserInteraction
+            view, center, ne, sw, zoom, heading, pitch, isGestureActive, isUserInteraction
         )
 
         fun make(
             view: View,
             mapboxMap: MapboxMap,
             cameraChanged: CameraChanged,
-            reason: CameraChangeReason
+            isGestureActive: Boolean,
+            isUserInteraction: Boolean
         ): MapCameraChangeEvent {
             val cameraState: CameraState = cameraChanged.cameraState
             val center = cameraState.center
@@ -95,7 +90,8 @@ class MapCameraChangeEvent(
                 zoom = cameraState.zoom,
                 heading = cameraState.bearing,
                 pitch = cameraState.pitch,
-                isUserInteraction = reason == CameraChangeReason.USER_GESTURE
+                isGestureActive = isGestureActive,
+                isUserInteraction = isUserInteraction
             )
         }
 

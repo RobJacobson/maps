@@ -385,7 +385,7 @@ This event is triggered whenever the currently displayed map region finished cha
 func
 ```
 v10 only, replaces onRegionIsChanging
-*signature:*`(state:{properties: {center: GeoJSON.Position, bounds: {ne: GeoJSON.Position, sw: GeoJSON.Position}, zoom: number, heading: number, pitch: number}, gestures: {isGestureActive: boolean}, timestamp: number}) =&gt; void`
+*signature:*`(state:{properties: {center: GeoJSON.Position, bounds: {ne: GeoJSON.Position, sw: GeoJSON.Position}, zoom: number, heading: number, pitch: number}, gestures: {isGestureActive: boolean, isUserInteraction: boolean}, timestamp: number}) =&gt; void`
 
 
   
@@ -395,7 +395,7 @@ v10 only, replaces onRegionIsChanging
 func
 ```
 v10 only, replaces onRegionDidChange
-*signature:*`(state:{properties: {center: GeoJSON.Position, bounds: {ne: GeoJSON.Position, sw: GeoJSON.Position}, zoom: number, heading: number, pitch: number}, gestures: {isGestureActive: boolean}, timestamp: number}) =&gt; void`
+*signature:*`(state:{properties: {center: GeoJSON.Position, bounds: {ne: GeoJSON.Position, sw: GeoJSON.Position}, zoom: number, heading: number, pitch: number}, gestures: {isGestureActive: boolean, isUserInteraction: boolean}, timestamp: number}) =&gt; void`
 
 [Map Handlers](../examples/V10/MapHandlers)
   

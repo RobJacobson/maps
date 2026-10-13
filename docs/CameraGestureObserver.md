@@ -10,7 +10,7 @@ CameraGestureObserver
 ```
 CameraGestureObserver
 
-Unified native observer optimized for onMapSteady.
+Observes user gesture settlement and camera changes independently of renderer idle.
 
 ## props
 
@@ -20,8 +20,8 @@ Unified native observer optimized for onMapSteady.
 ```tsx
 number
 ```
-Time in milliseconds to wait after last camera change before emitting 'steady' event.
-Default is 200ms.
+Time in milliseconds to wait after the last user gesture or gesture animation
+before emitting 'steady'. Default is 200ms.
 
 [Camera Gesture Observer](../examples/Map/CameraGestureObserver)
   
@@ -30,7 +30,7 @@ Default is 200ms.
 ```tsx
 number
 ```
-Maximum time in milliseconds before emitting 'timeout' event during continuous activity.
+Maximum time before emitting 'timeout' during continuous activity.
 
 [Camera Gesture Observer](../examples/Map/CameraGestureObserver)
   
@@ -39,18 +39,23 @@ Maximum time in milliseconds before emitting 'timeout' event during continuous a
 ```tsx
 func
 ```
-Callback when the map reaches a steady state (no active gestures or animations).
+Callback when user gestures and their camera animations have settled.
 *signature:*`(event:{nativeEvent: OnMapSteadyEvent}) =&gt; void`
 
 [Camera Gesture Observer](../examples/Map/CameraGestureObserver)
   
-### onMapCameraChange
+### onCameraChanged
 
 ```tsx
 func
 ```
-Callback when the camera changes (due to gestures or animations).
-*signature:*`(event:{nativeEvent: OnMapCameraChangeEvent}) =&gt; void`
+Callback on camera changes, using the same MapState shape as MapView.onCameraChanged.
+gestures.isGestureActive reports active touch gestures; gestures.isUserInteraction
+also includes camera animations owned by gestures (such as fling inertia).
+Programmatic camera changes report false, even while the location puck is pulsing.
+This event is independent of MapIdle and is currently supported on Android only.
+@platform android
+*signature:*`(state:MapState) =&gt; void`
 
 [Camera Gesture Observer](../examples/Map/CameraGestureObserver)
   

@@ -1,48 +1,39 @@
 import type { ViewProps } from 'react-native';
 import codegenNativeComponent from 'react-native/Libraries/Utilities/codegenNativeComponent';
+// prettier-ignore
 // @ts-ignore - CI environment type resolution issue for CodegenTypes
-import { DirectEventHandler, Double, } from 'react-native/Libraries/Types/CodegenTypes';
-
+import { DirectEventHandler, Double } from 'react-native/Libraries/Types/CodegenTypes';
 import type { UnsafeMixed } from './codegenUtils';
 
 export type OnMapSteadyEvent = {
   reason: 'steady' | 'timeout';
-  // ms since last camera change when reason === 'steady'
   idleDurationMs?: Double;
-  // e.g., 'pan' | 'pinch' | 'rotate' | 'pitch'
   lastGestureType?: string | null | undefined;
-  // Unix epoch in milliseconds
   timestamp: Double;
 };
 
-export type OnMapCameraChangeEvent = {
+export type OnCameraChangedEvent = {
   properties: {
-    // [longitude, latitude]
     center: Double[];
-    bounds: {
-      // northeast corner [longitude, latitude]
-      ne: Double[];
-      // southwest corner [longitude, latitude]
-      sw: Double[];
-    };
+    bounds: { ne: Double[]; sw: Double[] };
     zoom: Double;
     heading: Double;
     pitch: Double;
   };
-  // true if the camera change was initiated by user interaction (e.g., gesture)
-  isUserInteraction: boolean;
-  // Unix epoch in milliseconds
-  timestamp?: Double;
+  gestures: {
+    isGestureActive: boolean;
+    isUserInteraction: boolean;
+  };
+  timestamp: Double;
 };
 
 export interface NativeProps extends ViewProps {
   quietPeriodMs?: UnsafeMixed<number>;
   maxIntervalMs?: UnsafeMixed<number>;
-
   hasOnMapSteady: UnsafeMixed<boolean>;
   onMapSteady?: DirectEventHandler<OnMapSteadyEvent>;
-  hasOnMapCameraChange: UnsafeMixed<boolean>;
-  onMapCameraChange?: DirectEventHandler<OnMapCameraChangeEvent>;
+  hasOnCameraChanged: UnsafeMixed<boolean>;
+  onCameraChanged?: DirectEventHandler<OnCameraChangedEvent>;
 }
 
 export default codegenNativeComponent<NativeProps>(

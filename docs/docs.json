@@ -1028,7 +1028,7 @@
     "name": "Camera"
   },
   "CameraGestureObserver": {
-    "description": "CameraGestureObserver\n\nUnified native observer optimized for onMapSteady.",
+    "description": "CameraGestureObserver\n\nObserves user gesture settlement and camera changes independently of renderer idle.",
     "methods": [],
     "props": [
       {
@@ -1036,14 +1036,14 @@
         "required": false,
         "type": "number",
         "default": "none",
-        "description": "Time in milliseconds to wait after last camera change before emitting 'steady' event.\nDefault is 200ms."
+        "description": "Time in milliseconds to wait after the last user gesture or gesture animation\nbefore emitting 'steady'. Default is 200ms."
       },
       {
         "name": "maxIntervalMs",
         "required": false,
         "type": "number",
         "default": "none",
-        "description": "Maximum time in milliseconds before emitting 'timeout' event during continuous activity."
+        "description": "Maximum time before emitting 'timeout' during continuous activity."
       },
       {
         "name": "onMapSteady",
@@ -1053,17 +1053,17 @@
           "funcSignature": "(event:{nativeEvent: OnMapSteadyEvent}) => void"
         },
         "default": "none",
-        "description": "Callback when the map reaches a steady state (no active gestures or animations).\n*signature:*`(event:{nativeEvent: OnMapSteadyEvent}) => void`"
+        "description": "Callback when user gestures and their camera animations have settled.\n*signature:*`(event:{nativeEvent: OnMapSteadyEvent}) => void`"
       },
       {
-        "name": "onMapCameraChange",
+        "name": "onCameraChanged",
         "required": false,
         "type": {
           "name": "func",
-          "funcSignature": "(event:{nativeEvent: OnMapCameraChangeEvent}) => void"
+          "funcSignature": "(state:MapState) => void"
         },
         "default": "none",
-        "description": "Callback when the camera changes (due to gestures or animations).\n*signature:*`(event:{nativeEvent: OnMapCameraChangeEvent}) => void`"
+        "description": "Callback on camera changes, using the same MapState shape as MapView.onCameraChanged.\ngestures.isGestureActive reports active touch gestures; gestures.isUserInteraction\nalso includes camera animations owned by gestures (such as fling inertia).\nProgrammatic camera changes report false, even while the location puck is pulsing.\nThis event is independent of MapIdle and is currently supported on Android only.\n@platform android\n*signature:*`(state:MapState) => void`"
       }
     ],
     "fileNameWithExt": "CameraGestureObserver.tsx",
@@ -5608,20 +5608,20 @@
         "required": false,
         "type": {
           "name": "func",
-          "funcSignature": "(state:{properties: {center: GeoJSON.Position, bounds: {ne: GeoJSON.Position, sw: GeoJSON.Position}, zoom: number, heading: number, pitch: number}, gestures: {isGestureActive: boolean}, timestamp: number}) => void"
+          "funcSignature": "(state:{properties: {center: GeoJSON.Position, bounds: {ne: GeoJSON.Position, sw: GeoJSON.Position}, zoom: number, heading: number, pitch: number}, gestures: {isGestureActive: boolean, isUserInteraction: boolean}, timestamp: number}) => void"
         },
         "default": "none",
-        "description": "v10 only, replaces onRegionIsChanging\n*signature:*`(state:{properties: {center: GeoJSON.Position, bounds: {ne: GeoJSON.Position, sw: GeoJSON.Position}, zoom: number, heading: number, pitch: number}, gestures: {isGestureActive: boolean}, timestamp: number}) => void`"
+        "description": "v10 only, replaces onRegionIsChanging\n*signature:*`(state:{properties: {center: GeoJSON.Position, bounds: {ne: GeoJSON.Position, sw: GeoJSON.Position}, zoom: number, heading: number, pitch: number}, gestures: {isGestureActive: boolean, isUserInteraction: boolean}, timestamp: number}) => void`"
       },
       {
         "name": "onMapIdle",
         "required": false,
         "type": {
           "name": "func",
-          "funcSignature": "(state:{properties: {center: GeoJSON.Position, bounds: {ne: GeoJSON.Position, sw: GeoJSON.Position}, zoom: number, heading: number, pitch: number}, gestures: {isGestureActive: boolean}, timestamp: number}) => void"
+          "funcSignature": "(state:{properties: {center: GeoJSON.Position, bounds: {ne: GeoJSON.Position, sw: GeoJSON.Position}, zoom: number, heading: number, pitch: number}, gestures: {isGestureActive: boolean, isUserInteraction: boolean}, timestamp: number}) => void"
         },
         "default": "none",
-        "description": "v10 only, replaces onRegionDidChange\n*signature:*`(state:{properties: {center: GeoJSON.Position, bounds: {ne: GeoJSON.Position, sw: GeoJSON.Position}, zoom: number, heading: number, pitch: number}, gestures: {isGestureActive: boolean}, timestamp: number}) => void`"
+        "description": "v10 only, replaces onRegionDidChange\n*signature:*`(state:{properties: {center: GeoJSON.Position, bounds: {ne: GeoJSON.Position, sw: GeoJSON.Position}, zoom: number, heading: number, pitch: number}, gestures: {isGestureActive: boolean, isUserInteraction: boolean}, timestamp: number}) => void`"
       },
       {
         "name": "onWillStartLoadingMap",

@@ -142,6 +142,8 @@ export type MapState = {
   };
   gestures: {
     isGestureActive: boolean;
+    /** Included by CameraGestureObserver on Android; includes gesture inertia. */
+    isUserInteraction?: boolean;
   };
   timestamp?: number;
 };
