@@ -1,0 +1,41 @@
+Native unit suite: 18 tests, 0 failures, 0 errors
+
+Android build used unchanged Reanimated/Worklets binaries from the baseline APK.
+Map Kotlin code, the app, and native unit tests were rebuilt.
+Command run from example/android with Node 22.16.0:
+./gradlew :app:assembleDebug :rnmapbox_maps:testDebugUnitTest --offline --no-daemon --max-workers=2 -PreactNativeDevServerPort=8082 -PreactNativeArchitectures=arm64-v8a -x ':react-native-reanimated:buildCMakeDebug[arm64-v8a][reanimated]' -x :react-native-reanimated:externalNativeBuildDebug -x ':react-native-worklets:buildCMakeDebug[arm64-v8a][worklets]' -x :react-native-worklets:externalNativeBuildDebug
+
+final-build.log
+Deprecated Gradle features were used in this build, making it incompatible with Gradle 10.
+
+You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.
+
+For more on this, please refer to https://docs.gradle.org/9.0.0/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.
+
+BUILD SUCCESSFUL in 51s
+225 actionable tasks: 21 executed, 204 up-to-date
+Consider enabling configuration cache to speed up this build: https://docs.gradle.org/9.0.0/userguide/configuration_cache_enabling.html
+
+js-tests.log
+    ✓ should resume pack download
+    ✓ should pause pack download
+    ✓ should get pack status
+
+Test Suites: 25 passed, 25 total
+Tests:       164 passed, 164 total
+Snapshots:   0 total
+Time:        9.205 s, estimated 22 s
+Ran all test suites.
+
+lint.log
+/Users/rob/.codex/worktrees/issue-2738-long-press-camera/rnmapbox/src/specs/RNMBXCameraGestureObserverNativeComponent.ts
+  4:9  warning  Replace `·DirectEventHandler,·Double,·` with `⏎··DirectEventHandler,⏎··Double,⏎`  prettier/prettier
+
+/Users/rob/.codex/worktrees/issue-2738-long-press-camera/rnmapbox/src/specs/RNMBXMarkerViewContentNativeComponent.ts
+  4:9  warning  Replace `·DirectEventHandler,·Float·` with `⏎··DirectEventHandler,⏎··Float,⏎`  prettier/prettier
+
+✖ 266 problems (0 errors, 266 warnings)
+  0 errors and 244 warnings potentially fixable with the `--fix` option.
+
+
+Generation: root scripts/autogenerate.mjs completed with the generated files staged; no further generated changes.

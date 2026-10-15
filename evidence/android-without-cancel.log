@@ -1,0 +1,9 @@
+flyTo {"held": {"target": [-0.14890326355333627, 51.50926102930944], "center": [-0.14890330000000063, 51.50926100000001], "zoom": 16, "gestureActive": true}, "released": {"center": [-0.14890330000000063, 51.50926100000001], "zoom": 16, "gestureActive": true}, "error": 3.644666435320687e-08}
+Traceback (most recent call last):
+  File "/Users/rob/.codex/worktrees/issue-2738-long-press-camera/rnmapbox/example/e2e/longPressCamera.android.py", line 115, in <module>
+    main()
+    ~~~~^^
+  File "/Users/rob/.codex/worktrees/issue-2738-long-press-camera/rnmapbox/example/e2e/longPressCamera.android.py", line 104, in main
+    assert not held['gestureActive'], held
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: {'target': [-0.14890326355333627, 51.50926102930944], 'center': [-0.14890330000000063, 51.50926100000001], 'zoom': 16, 'gestureActive': True}

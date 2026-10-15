@@ -1,0 +1,7 @@
+iPhone 18 Pro, iOS 27.0 simulator; unchanged iOS implementation
+Hold 1.5 seconds, drift 8 points at 8 points/second, hold 3 seconds
+Each mode also verifies panning on the next touch
+IOS_DRIFT flyTo {"target":[-0.14891996384602635,51.50938233706643],"center":[-0.14892000000000394,51.50938229999999],"zoom":16,"gestureActive":false}
+IOS_DRIFT easeTo {"target":[-0.14891996384602635,51.50938233706643],"center":[-0.14892000000000394,51.50938229999999],"zoom":16,"gestureActive":false}
+IOS_DRIFT moveTo {"target":[-0.14891996384602635,51.50938233706643],"center":[-0.14892000000000394,51.50938229999999],"zoom":16,"gestureActive":false}
+Native XCUITest passed: 1 test, 0 failures, 0 skipped
