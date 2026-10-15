@@ -1,0 +1,14 @@
+Expected control failures. Temporary JS fixture changes only:
+- moveBy displacement x: 100 -> x: 0
+- scaleBy factor 2 -> factor 1
+No control changes are included in the PR.
+
+Test Case '-[LongPressCameraTests.LongPressCameraTests testMoveBy]' started.
+/Users/rob/.codex/worktrees/issue-2738-long-press-camera/rnmapbox/example/e2e/LongPressCameraTests.swift:85: error: -[LongPressCameraTests.LongPressCameraTests testMoveBy] : XCTAssertGreaterThan failed: ("7.105427357601002e-15") is not greater than ("1e-05")
+Test Case '-[LongPressCameraTests.LongPressCameraTests testMoveBy]' failed (20.893 seconds).
+Test Case '-[LongPressCameraTests.LongPressCameraTests testScaleBy]' started.
+/Users/rob/.codex/worktrees/issue-2738-long-press-camera/rnmapbox/example/e2e/LongPressCameraTests.swift:87: error: -[LongPressCameraTests.LongPressCameraTests testScaleBy] : XCTAssertEqualWithAccuracy failed: ("16.0") is not equal to ("17.0") +/- ("0.0001")
+Test Case '-[LongPressCameraTests.LongPressCameraTests testScaleBy]' failed (19.518 seconds).
+	 Executed 2 tests, with 2 failures (0 unexpected) in 40.411 (40.446) seconds
+	 Executed 2 tests, with 2 failures (0 unexpected) in 40.411 (40.450) seconds
+	 Executed 2 tests, with 2 failures (0 unexpected) in 40.411 (40.453) seconds

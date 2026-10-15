@@ -1,0 +1,33 @@
+iPhone 18 Pro, iOS 27.0 simulator; Mapbox 11.23.1 / React Native 0.84.1 / New Architecture
+Unchanged iOS library implementation; permanent LongPressCamera Xcode UI suite
+Each case opens the normal Camera > Long Press Camera menu.
+Hold 1.5 seconds, drift 8 points at 8 points/second, hold 3 seconds.
+Relative cases also calibrate against a stationary camera command.
+Each case checks the camera after release and verifies a fresh pan.
+
+TEST_RUNNER_RNMBX_METRO_HOST=localhost:8082 xcodebuild test -project example/ios/RNMapboxExample.xcodeproj -scheme LongPressCamera -destination 'platform=iOS Simulator,id=8B7D7CE4-228E-409F-A156-A597D4E448A5' -derivedDataPath /private/tmp/issue2738-ios/build -parallel-testing-enabled NO CODE_SIGN_IDENTITY=- CODE_SIGN_STYLE=Manual
+
+Test Case '-[LongPressCameraTests.LongPressCameraTests testEaseTo]' started.
+    t =    14.38s     Tap "Long Press Camera, " Other
+IOS_LONG_PRESS easeTo held=[-0.14892000000000394, 51.50949250000002] released=[-0.14892000000000394, 51.50949250000002] zoom=16.0
+Test Case '-[LongPressCameraTests.LongPressCameraTests testEaseTo]' passed (29.013 seconds).
+Test Case '-[LongPressCameraTests.LongPressCameraTests testFlyTo]' started.
+    t =    13.39s     Tap "Long Press Camera, " Other
+IOS_LONG_PRESS flyTo held=[-0.14892000000000394, 51.50949250000002] released=[-0.14892000000000394, 51.50949250000002] zoom=16.0
+Test Case '-[LongPressCameraTests.LongPressCameraTests testFlyTo]' passed (27.415 seconds).
+Test Case '-[LongPressCameraTests.LongPressCameraTests testMoveBy]' started.
+    t =    13.51s     Tap "Long Press Camera, " Other
+IOS_LONG_PRESS moveBy held=[-0.1510728999999742, 51.510000000000005] released=[-0.1510728999999742, 51.510000000000005] zoom=16.0
+Test Case '-[LongPressCameraTests.LongPressCameraTests testMoveBy]' passed (34.912 seconds).
+Test Case '-[LongPressCameraTests.LongPressCameraTests testMoveTo]' started.
+    t =    14.14s     Tap "Long Press Camera, " Other
+IOS_LONG_PRESS moveTo held=[-0.14892000000000394, 51.50949250000002] released=[-0.14892000000000394, 51.50949250000002] zoom=16.0
+Test Case '-[LongPressCameraTests.LongPressCameraTests testMoveTo]' passed (28.940 seconds).
+Test Case '-[LongPressCameraTests.LongPressCameraTests testScaleBy]' started.
+    t =    13.50s     Tap "Long Press Camera, " Other
+IOS_LONG_PRESS scaleBy held=[-0.14999999999966462, 51.50999944353397] released=[-0.14999999999966462, 51.50999944353397] zoom=17.0
+Test Case '-[LongPressCameraTests.LongPressCameraTests testScaleBy]' passed (35.462 seconds).
+	 Executed 5 tests, with 0 failures (0 unexpected) in 155.741 (155.774) seconds
+	 Executed 5 tests, with 0 failures (0 unexpected) in 155.741 (155.783) seconds
+	 Executed 5 tests, with 0 failures (0 unexpected) in 155.741 (155.785) seconds
+** TEST SUCCEEDED **

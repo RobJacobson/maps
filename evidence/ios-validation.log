@@ -1,0 +1,13 @@
+TEST_RUNNER_RNMBX_METRO_HOST=localhost:8082 xcodebuild test -project example/ios/RNMapboxExample.xcodeproj -scheme LongPressCamera -destination 'platform=iOS Simulator,id=8B7D7CE4-228E-409F-A156-A597D4E448A5' -derivedDataPath /private/tmp/issue2738-ios/build -parallel-testing-enabled NO CODE_SIGN_IDENTITY=- CODE_SIGN_STYLE=Manual
+
+Native UI suite: 5 passed, 0 failed, 0 skipped.
+Temporary no-effect controls: both expected assertion failures observed.
+
+Required repository check: yarn test
+✖ 266 problems (0 errors, 266 warnings)
+Test Suites: 25 passed, 25 total
+Tests:       164 passed, 164 total
+
+UI test runner built from committed source. Installed example app uses the unchanged iOS library and the previously documented iOS 27 scene bootstrap.
+A temporary Metro entry registers the full PR example App; isolated Babel/dependency resolution handles the existing worktree links. Temporary setup and controls are absent from the PR.
+Physical devices, older iOS versions, and repository-wide TypeScript checks were not run.
